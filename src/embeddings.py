@@ -1,11 +1,11 @@
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import Chroma
 
 
 # Create vector databases from chunks
 def create_vector_store(chunks):
     # Initialize embedding model
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+    embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
 
     # Create and store embeddings
     vector_store = Chroma.from_documents(
