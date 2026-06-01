@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from src.pdf_loader import load_pdf
 from src.chunking import create_chunks
 from src.embeddings import create_vector_store
+from src.retrieval import retrieve_chunks
 
 # Load .env variables
 load_dotenv()
@@ -25,3 +26,12 @@ print("Chunks created successfully")
 vector_store = create_vector_store(chunks)
 
 print("Vector database created successfully")
+
+query = input("Ask a question: ")
+
+results = retrieve_chunks(query)
+
+for i, result in enumerate(results, start=1):
+    print(f"\nResult {i}:\n")
+
+    print(result.page_content)
