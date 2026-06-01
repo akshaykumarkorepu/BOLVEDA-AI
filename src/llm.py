@@ -19,7 +19,3 @@ def generate_response(prompt):
     )
 
     return response.choices[0].message.content
-
-
-response = generate_response("What is AI?")
-print(response)
