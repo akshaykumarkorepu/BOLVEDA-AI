@@ -25,6 +25,23 @@ while True:
     # Retrieve relevant chunks
     results = retrieve_chunks(query)
 
+    # Store citations
+    sources = []
+
+    # Loop through all retrieved chunks
+    for result in results:
+        source = result.metadata.get("source")
+        page = result.metadata.get("page_label")
+
+        # Create formatted citation
+        sources.append(f"{source} - Page {page}")
+
+    # Remove duplicate citations
+    unique_sources = list(set(sources))
+
+    # Format citations nicely
+    formatted_sources = "\n".join([f"- {source}" for source in unique_sources])
+
     # Combine retrieved chunks into one context string
     context = "\n\n".join([result.page_content for result in results])
 
@@ -56,11 +73,6 @@ Current Question:
 Answer:
 """
 
-    print("\nRetrieved Context:\n")
-    print(context)
-
-    print("\n" + "=" * 50 + "\n")
-
     # Generate response
     answer = generate_response(prompt)
 
@@ -69,3 +81,7 @@ Answer:
 
     print("\nAnswer:\n")
     print(answer)
+
+    # Display citations
+    print("\nSources:\n")
+    print(formatted_sources)

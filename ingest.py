@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 
 from src.pdf_loader import load_pdf
 from src.chunking import create_chunks
@@ -19,6 +20,11 @@ print("PDF loaded successfully")
 chunks = create_chunks(documents)
 
 print("Chunks created successfully")
+
+# Clean source names
+for chunk in chunks:
+    source = chunk.metadata.get("source", "")
+    chunk.metadata["source"] = os.path.basename(source)
 
 # Step 3: Create vector database
 vector_store = create_vector_store(chunks)
