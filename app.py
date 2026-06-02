@@ -2,51 +2,70 @@ from dotenv import load_dotenv
 from src.retrieval import retrieve_chunks
 from src.llm import generate_response
 
+from memory import add_to_history, format_history
+
 # Load .env variables
 load_dotenv()
 
 print("Vector database loaded successfully")
 
-# Ask user question
-query = input("Ask your question: ")
+# CHAT LOOP STARTS HERE
+while True:
+    # Ask user question
+    query = input("\nAsk your question: ")
 
-# Retrieve relevant chunks
-results = retrieve_chunks(query)
+    # Exit chatbot
+    if query.lower() == "exit":
+        print("Exiting chatbot...")
+        break
 
-# Combine retrieved chunks into a single context string
-context = "\n\n".join([result.page_content for result in results])
+    # Save user message into memory
+    add_to_history("user", query)
 
-# Create prompt with context and user question
-prompt = f"""
+    # Retrieve relevant chunks
+    results = retrieve_chunks(query)
+
+    # Combine retrieved chunks into one context string
+    context = "\n\n".join([result.page_content for result in results])
+
+    # Get formatted conversation history
+    history = format_history()
+
+    # Create prompt
+    prompt = f"""
 You are a helpful AI assistant.
 
-Answer the question ONLY using the provided context below.
+Use ONLY the provided context.
 
-If the answer is not present in the context,
+If the answer is not found in the context,
 say:
-"I could not find the answer in the provided context."
+"I could not find this information in the provided documents."
 
 Do not make up information.
 Do not use outside knowledge.
 
+Conversation History:
+{history}
+
 Context:
 {context}
 
-Question:
+Current Question:
 {query}
 
 Answer:
 """
 
-print("\nRetrieved Context:\n")
+    print("\nRetrieved Context:\n")
+    print(context)
 
-print(context)
+    print("\n" + "=" * 50 + "\n")
 
-print("\n" + "=" * 50 + "\n")
+    # Generate response
+    answer = generate_response(prompt)
 
-# Send prompt to LLM and generate response
-answer = generate_response(prompt)
+    # Save assistant response into memory
+    add_to_history("assistant", answer)
 
-print("\nAnswer:\n")
-
-print(answer)
+    print("\nAnswer:\n")
+    print(answer)
