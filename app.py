@@ -9,6 +9,31 @@ load_dotenv()
 
 print("Vector database loaded successfully")
 
+# SYSTEM PROMPT
+SYSTEM_PROMPT = """
+You are a professional AI assistant answering questions strictly from provided documents.
+
+Rules:
+1. Answer ONLY using the provided context.
+2. Do NOT make up information.
+3. If the answer is not present in the context, say:
+   "I could not find that information in the provided documents."
+4. Be concise and accurate.
+5. Never assume facts not explicitly stated.
+6. Do not use outside knowledge.
+7. If context is insufficient, clearly state that.
+
+Output Format:
+
+Summary:
+- Give a short 1-2 sentence summary.
+
+Detailed Answer:
+- Provide a slightly more detailed explanation using ONLY the retrieved context.
+
+Do NOT mention anything outside the provided context.
+"""
+
 # CHAT LOOP STARTS HERE
 while True:
     # Ask user question
@@ -50,16 +75,8 @@ while True:
 
     # Create prompt
     prompt = f"""
-You are a helpful AI assistant.
 
-Use ONLY the provided context.
-
-If the answer is not found in the context,
-say:
-"I could not find this information in the provided documents."
-
-Do not make up information.
-Do not use outside knowledge.
+{SYSTEM_PROMPT}
 
 Conversation History:
 {history}
@@ -70,7 +87,13 @@ Context:
 Current Question:
 {query}
 
-Answer:
+Generate the response in the following format:
+
+Summary:
+- Short concise answer
+
+Detailed Answer:
+- More detailed explanation using ONLY the retrieved context
 """
 
     # Generate response
@@ -82,6 +105,7 @@ Answer:
     print("\nAnswer:\n")
     print(answer)
 
-    # Display citations
-    print("\nSources:\n")
-    print(formatted_sources)
+    # Print citations ONLY if answer was found
+    if "I could not find" not in answer:
+        print("\nSources:\n")
+        print(formatted_sources)
