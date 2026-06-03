@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from src.retrieval import retrieve_chunks
 from src.llm import generate_response
 
-from memory import add_to_history, format_history
+from src.memory import add_to_history, format_history
 
 # Load .env variables
 load_dotenv()
@@ -34,16 +34,9 @@ Detailed Answer:
 Do NOT mention anything outside the provided context.
 """
 
-# CHAT LOOP STARTS HERE
-while True:
-    # Ask user question
-    query = input("\nAsk your question: ")
 
-    # Exit chatbot
-    if query.lower() == "exit":
-        print("Exiting chatbot...")
-        break
-
+# SHARED RAG FUNCTION
+def process_query(query):
     # Save user message into memory
     add_to_history("user", query)
 
@@ -102,10 +95,28 @@ Detailed Answer:
     # Save assistant response into memory
     add_to_history("assistant", answer)
 
-    print("\nAnswer:\n")
-    print(answer)
+    # Return BOTH answer and citations
+    return answer, formatted_sources
 
-    # Print citations ONLY if answer was found
-    if "I could not find" not in answer:
-        print("\nSources:\n")
-        print(formatted_sources)
+
+# CHAT LOOP STARTS HERE
+if __name__ == "__main__":
+    while True:
+        # Ask user question
+        query = input("\nAsk your question: ")
+
+        # Exit chatbot
+        if query.lower() == "exit":
+            print("Exiting chatbot...")
+            break
+
+        # Use shared RAG function
+        answer, sources = process_query(query)
+
+        print("\nAnswer:\n")
+        print(answer)
+
+        # Print citations ONLY if answer was found
+        if "I could not find" not in answer:
+            print("\nSources:\n")
+            print(sources)

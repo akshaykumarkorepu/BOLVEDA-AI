@@ -1,7 +1,9 @@
-from recorder import record_audio
-from whisper_stt import transcribe_audio
+from src.app import process_query
 
-print("\nBOLVEDA Voice Assistant Started\n")
+from src.voice.recorder import record_audio
+from src.voice.whisper_stt import transcribe_audio
+
+print("\nBOLVEDA Voice Assistant Started")
 
 # Step 1: Record audio
 record_audio()
@@ -12,3 +14,15 @@ transcript = transcribe_audio()
 # Step 3: Print transcript
 print("\nUser said:")
 print(transcript)
+
+# Step 4: Send transcript into RAG pipeline
+answer, sources = process_query(transcript)
+
+# Step 5: Print AI response
+print("\nAnswer:\n")
+print(answer)
+
+# Step 6: Print citations
+if "I could not find" not in answer:
+    print("\nSources:\n")
+    print(sources)
