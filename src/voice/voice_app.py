@@ -3,6 +3,8 @@ from src.app import process_query
 from src.voice.recorder import record_audio
 from src.voice.whisper_stt import transcribe_audio
 
+from src.tts import speak
+
 print("\nBOLVEDA Voice Assistant Started")
 
 # Step 1: Record audio
@@ -22,7 +24,10 @@ answer, sources = process_query(transcript)
 print("\nAnswer:\n")
 print(answer)
 
-# Step 6: Print citations
+# Step 6: Speak response aloud
+speak(answer)
+
+# Step 7: Print citations
 if "I could not find" not in answer:
     print("\nSources:\n")
     print(sources)
