@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
-from elevenlabs.play import play
 
 # Load environment variables
 load_dotenv()
@@ -13,11 +12,15 @@ api_key = os.getenv("ELEVENLABS_API_KEY")
 client = ElevenLabs(api_key=api_key)
 
 
-def speak(text):
-    # Convert text into speech audio
-    audio = client._text_to_speech.convert(
+def generate_speech(text, output_path="temp/output.mp3"):
+    # Generate audio stream
+    audio = client.text_to_speech.convert(
         voice_id="JBFqnCBsd6RMkjVDRZzb", model_id="eleven_multilingual_v2", text=text
     )
 
-    # Play generated audio
-    play(audio)
+    # Save audio to file
+    with open(output_path, "wb") as f:
+        for chunk in audio:
+            f.write(chunk)
+
+    return output_path

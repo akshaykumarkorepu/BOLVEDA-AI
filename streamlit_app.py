@@ -3,6 +3,7 @@ import streamlit as st
 from src.rag_pipeline import process_query
 from src.ingest import ingest_pdf
 from src.voice.whisper_stt import transcribe_audio
+from src.voice.tts import generate_speech
 
 # Page setup
 st.set_page_config(page_title="BOLVEDA", page_icon="🤖", layout="wide")
@@ -115,6 +116,16 @@ if user_input is not None and user_input.strip() != "":
 """
 
         response_placeholder.markdown(assistant_response)
+
+        # Generate speech audio
+        audio_path = generate_speech(full_response)
+
+        # Auto-play audio
+        audio_file = open(audio_path, "rb")
+
+        audio_bytes = audio_file.read()
+
+        st.audio(audio_bytes, format="audio/mp3", autoplay=True)
 
         # Save assistant response
         st.session_state.messages.append(

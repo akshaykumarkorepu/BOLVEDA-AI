@@ -3,7 +3,7 @@ from src.app import process_query
 from src.voice.recorder import record_audio
 from src.voice.whisper_stt import transcribe_audio
 
-from src.tts import speak
+from voice.tts import speak
 
 print("\nBOLVEDA Voice Assistant Started")
 

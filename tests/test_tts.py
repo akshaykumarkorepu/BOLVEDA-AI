@@ -1,3 +1,3 @@
-from src.tts import speak
+from voice.tts import speak
 
 speak("Hello Akki. BOLVEDA voice assistant is now online.")
