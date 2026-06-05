@@ -14,10 +14,6 @@ CHROMA_DB_PATH = "chroma_db"
 
 
 def ingest_pdf(pdf_path):
-    # Clear old vector database
-    if os.path.exists(CHROMA_DB_PATH):
-        shutil.rmtree(CHROMA_DB_PATH)
-
     # Step 1: Load PDF
     documents = load_pdf(pdf_path)
 
