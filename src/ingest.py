@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import shutil
 
 from src.pdf_loader import load_pdf
 from src.chunking import create_chunks
@@ -8,25 +9,31 @@ from src.embeddings import create_vector_store
 # Load .env variables
 load_dotenv()
 
-# PDF path
-pdf_path = "data/sample.pdf"
+# ChromaDB storage path
+CHROMA_DB_PATH = "chroma_db"
 
-# Step 1: Load PDF
-documents = load_pdf(pdf_path)
 
-print("PDF loaded successfully")
+def ingest_pdf(pdf_path):
+    # Clear old vector database
+    if os.path.exists(CHROMA_DB_PATH):
+        shutil.rmtree(CHROMA_DB_PATH)
 
-# Step 2: Create chunks
-chunks = create_chunks(documents)
+    # Step 1: Load PDF
+    documents = load_pdf(pdf_path)
 
-print("Chunks created successfully")
+    print("PDF loaded successfully")
 
-# Clean source names
-for chunk in chunks:
-    source = chunk.metadata.get("source", "")
-    chunk.metadata["source"] = os.path.basename(source)
+    # Step 2: Create chunks
+    chunks = create_chunks(documents)
 
-# Step 3: Create vector database
-vector_store = create_vector_store(chunks)
+    print("Chunks created successfully")
 
-print("Vector database created successfully")
+    # Clean source names
+    for chunk in chunks:
+        source = chunk.metadata.get("source", "")
+        chunk.metadata["source"] = os.path.basename(source)
+
+    # Step 3: Create vector database
+    create_vector_store(chunks)
+
+    print("Vector database created successfully")
