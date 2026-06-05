@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import os
-import shutil
 
 from src.pdf_loader import load_pdf
 from src.chunking import create_chunks

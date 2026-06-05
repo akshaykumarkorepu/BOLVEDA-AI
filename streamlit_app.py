@@ -78,7 +78,7 @@ if audio_value:
     user_input = transcript
 
 # Handle chat interaction
-if user_input:
+if user_input is not None and user_input.strip() != "":
     # Save user message
     st.session_state.messages.append({"role": "user", "content": user_input})
 
@@ -86,22 +86,37 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Generate real AI response
-    with st.spinner("Thinking..."):
-        answer, sources = process_query(user_input)
+    # Generate streaming AI response
+    with st.chat_message("assistant"):
+        response_placeholder = st.empty()
 
+        full_response = ""
+
+        sources = ""
+
+        # Stream chunks live
+        for chunk, citation in process_query(user_input):
+            # If chunk exists → stream it
+            if chunk:
+                full_response += chunk
+
+                response_placeholder.markdown(full_response + "▌")
+
+            # If citations arrive
+            if citation:
+                sources = citation
+
+        # Final clean response
         assistant_response = f"""
-{answer}
+{full_response}
 
 ### Sources:
 {sources}
 """
 
-    # Save assistant response
-    st.session_state.messages.append(
-        {"role": "assistant", "content": assistant_response}
-    )
+        response_placeholder.markdown(assistant_response)
 
-    # Display assistant response
-    with st.chat_message("assistant"):
-        st.markdown(assistant_response)
+        # Save assistant response
+        st.session_state.messages.append(
+            {"role": "assistant", "content": assistant_response}
+        )

@@ -7,7 +7,7 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
-def generate_response(prompt):
+def stream_response(prompt):
     response = client.chat.completions.create(
         messages=[
             {
@@ -16,6 +16,11 @@ def generate_response(prompt):
             }
         ],
         model="llama-3.3-70b-versatile",
+        stream=True,
     )
 
-    return response.choices[0].message.content
+    for chunk in response:
+        delta = chunk.choices[0].delta
+
+        if hasattr(delta, "content") and delta.content is not None:
+            yield delta.content

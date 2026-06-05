@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from src.retrieval import retrieve_chunks
-from src.llm import generate_response
+from src.llm import stream_response
 from src.memory import add_to_history, format_history
 
 load_dotenv()
@@ -85,11 +85,19 @@ Detailed Answer:
 - More detailed explanation using ONLY the retrieved context
 """
 
-    # Generate response
-    answer = generate_response(prompt)
+    # Store full streamed response
+    full_answer = ""
+
+    # Stream chunks from LLM
+    for chunk in stream_response(prompt):
+        # Keep building final answer
+        full_answer += chunk
+
+        # Send chunk to UI
+        yield chunk, None
 
     # Save assistant response into memory
-    add_to_history("assistant", answer)
+    add_to_history("assistant", full_answer)
 
-    # Return BOTH answer and citations
-    return answer, formatted_sources
+    # Send citations AFTER streaming finishes
+    yield None, formatted_sources
