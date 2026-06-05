@@ -1,10 +1,10 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-from dotenv import load_dotenv
 
-load_dotenv()
-
-embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
+# Local embedding model
+embedding_model = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
 vector_store = Chroma(persist_directory="chroma_db", embedding_function=embedding_model)
 
