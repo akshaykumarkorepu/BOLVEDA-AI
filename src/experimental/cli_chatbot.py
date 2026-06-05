@@ -1,4 +1,4 @@
-from src.rag_pipeline import process_query
+from rag.rag_pipeline import process_query
 
 print("Vector database loaded successfully")
 

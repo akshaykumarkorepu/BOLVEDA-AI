@@ -1,15 +1,8 @@
-from dotenv import load_dotenv
 import os
 
-from src.pdf_loader import load_pdf
-from src.chunking import create_chunks
-from src.embeddings import create_vector_store
-
-# Load .env variables
-load_dotenv()
-
-# ChromaDB storage path
-CHROMA_DB_PATH = "chroma_db"
+from src.ingestion.pdf_loader import load_pdf
+from src.ingestion.chunking import create_chunks
+from src.rag.embeddings import create_vector_store
 
 
 def ingest_pdf(pdf_path):

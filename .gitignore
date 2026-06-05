@@ -227,9 +227,6 @@ __pycache__/
 # Uploaded PDFs
 data/uploads/
 
-# Local PDF files
-data/*.pdf
-
 # Temporary files
 temp/
 
