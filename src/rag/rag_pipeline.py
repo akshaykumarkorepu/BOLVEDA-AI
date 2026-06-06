@@ -42,6 +42,16 @@ def process_query(query):
     # Retrieve relevant chunks
     results = retrieve_chunks(query)
 
+    # Handle empty retrieval
+    if not results:
+        fallback = "I could not find that information in the provided documents."
+
+        add_to_history("assistant", fallback)
+
+        yield fallback, None
+
+        return
+
     # Store citations
     sources = []
 

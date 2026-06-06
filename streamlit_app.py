@@ -1,3 +1,4 @@
+import time
 import streamlit as st
 
 from src.rag.rag_pipeline import process_query
@@ -10,7 +11,7 @@ st.set_page_config(page_title="BOLVEDA", page_icon="🤖", layout="wide")
 
 # Sidebar
 with st.sidebar:
-    st.title("BOLVEDA")
+    st.title("🧠 Your AI Workspace")
 
     st.markdown("---")
 
@@ -40,6 +41,9 @@ with st.sidebar:
 
         st.success("PDF processed successfully!")
 
+        # Active document display
+        st.write(f"📄 Active Document: {uploaded_file.name}")
+
     st.markdown("---")
 
     # Clear chat button
@@ -55,15 +59,20 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Main UI
-st.title("BOLVEDA AI Assistant")
+st.title("BOLVEDA AI")
 
-st.caption("Conversational RAG-powered document assistant")
+st.markdown("#### Transform documents into intelligent conversations")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Display previous chat history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    if message["role"] == "user":
+        avatar = ":material/person:"
+    else:
+        avatar = ":material/smart_toy:"
+
+    with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
 
 # Chat input
@@ -76,16 +85,32 @@ if user_input is not None and user_input.strip() != "":
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     # Display user message
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=":material/person:"):
         st.markdown(user_input)
 
     # Generate streaming AI response
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=":material/smart_toy:"):
         response_placeholder = st.empty()
+
+        thinking_placeholder = st.empty()
 
         full_response = ""
 
         sources = ""
+
+        # Thinking flow
+        thinking_steps = [
+            "🔍 Searching document...",
+            "📚 Retrieving relevant chunks...",
+            "🧠 Generating grounded response...",
+            "✨ Finalizing answer...",
+        ]
+
+        # Display thinking animation
+        for step in thinking_steps:
+            thinking_placeholder.info(step)
+
+            time.sleep(0.6)
 
         # Stream response
         for chunk, citation in process_query(user_input):
@@ -93,23 +118,25 @@ if user_input is not None and user_input.strip() != "":
             if chunk:
                 full_response += chunk
 
+                # Typing cursor effect
                 response_placeholder.markdown(full_response + "▌")
 
             # If citations arrive
             if citation:
                 sources = citation
 
-        # Final formatted response
-        assistant_response = f"""
-{full_response}
+        # Remove thinking flow
+        thinking_placeholder.empty()
 
-### Sources:
-{sources}
-"""
+        # Final response without cursor
+        response_placeholder.markdown(full_response)
 
-        response_placeholder.markdown(assistant_response)
+        # Display citations
+        if sources:
+            with st.expander("📚 Sources & Citations"):
+                st.markdown(sources)
 
         # Save assistant response
         st.session_state.messages.append(
-            {"role": "assistant", "content": assistant_response}
+            {"role": "assistant", "content": full_response}
         )
