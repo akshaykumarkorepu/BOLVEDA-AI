@@ -1,11 +1,32 @@
 from src.rag.retrieval import retrieve_chunks
 
 
-results = retrieve_chunks("What is llm?")
+queries = [
+    "What is an LLM?",
+    "How are LLMs aligned to human preferences?",
+    "What is cosine similarity?",
+    "Why are vector databases used?",
+    "Who won FIFA 2014?",
+]
 
-print("\nRetrieved Chunks:\n")
 
-for result in results:
-    print(result.page_content[:500])
+for query in queries:
+    print("\n" + "=" * 80)
+    print(f"QUERY: {query}")
+    print("=" * 80)
 
-    print("\n---\n")
+    results = retrieve_chunks(query)
+
+    if not results:
+        print("No chunks retrieved.")
+        continue
+
+    for i, result in enumerate(results):
+        print(f"\n--- CHUNK {i + 1} ---\n")
+
+        print(result.page_content[:700])
+
+        print("\nMETADATA:")
+        print(result.metadata)
+
+        print("\n" + "-" * 80)

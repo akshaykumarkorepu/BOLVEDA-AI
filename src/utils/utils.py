@@ -1,4 +1,6 @@
 import streamlit as st
+import shutil
+import os
 
 from langchain_community.vectorstores import Chroma
 from src.rag.embeddings import get_embedding_model
@@ -14,3 +16,13 @@ def load_vectorstore():
     )
 
     return vector_store
+
+
+def clear_vectorstore():
+    # Clear Streamlit cache first
+    load_vectorstore.clear()
+
+    vectorstore_path = "chroma_db"
+
+    if os.path.exists(vectorstore_path):
+        shutil.rmtree(vectorstore_path)

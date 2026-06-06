@@ -4,6 +4,7 @@ import streamlit as st
 from src.rag.rag_pipeline import process_query
 from src.ingestion.ingest import ingest_pdf
 from src.memory.memory import clear_history
+from src.utils.utils import clear_vectorstore
 
 
 # Page setup
@@ -32,8 +33,9 @@ with st.sidebar:
             with open(save_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
 
-            # Generate embeddings
             with st.spinner("Processing PDF..."):
+                clear_vectorstore()
+
                 ingest_pdf(save_path)
 
         # Mark as processed
