@@ -1,9 +1,12 @@
 import sqlite3
 
+# Create/connect to SQLite database file
 conn = sqlite3.connect("app.db")
 
+# Cursor executes SQL commands
 cursor = conn.cursor()
 
+# Create documents table for storing uploaded PDF metadata
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS documents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,6 +16,7 @@ CREATE TABLE IF NOT EXISTS documents (
 )
 """)
 
+# Create queries table for storing RAG interactions
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS queries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,6 +29,7 @@ CREATE TABLE IF NOT EXISTS queries (
 )
 """)
 
+# Create evaluation table for future RAG benchmarking/testing
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS evaluation_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,8 +41,9 @@ CREATE TABLE IF NOT EXISTS evaluation_results (
 )
 """)
 
+# Save all database changes permanently
 conn.commit()
-
+# Close database connection safely
 conn.close()
 
 print("Database and tables created successfully!")

@@ -6,6 +6,7 @@ from src.ingestion.ingest import ingest_pdf
 from src.memory.memory import clear_history
 from src.utils.utils import clear_vectorstore
 
+from db.db_logger import log_document
 
 # Page setup
 st.set_page_config(page_title="BOLVEDA", page_icon="🤖", layout="wide")
@@ -36,7 +37,11 @@ with st.sidebar:
             with st.spinner("Processing PDF..."):
                 clear_vectorstore()
 
-                ingest_pdf(save_path)
+                # Process PDF and get total chunks created
+                chunk_count = ingest_pdf(save_path)
+
+                # Log uploaded document into SQLite
+                log_document(uploaded_file.name, chunk_count)
 
         # Mark as processed
         st.session_state.processed_files.add(uploaded_file.name)

@@ -1,6 +1,10 @@
+import time
+
 from src.rag.retrieval import retrieve_chunks
 from src.rag.llm import stream_response
 from src.memory.memory import add_to_history, format_history
+
+from db.db_logger import log_query
 
 # SYSTEM PROMPT
 SYSTEM_PROMPT = """
@@ -33,6 +37,9 @@ Important:
 def process_query(query):
     # Save user message into memory
     add_to_history("user", query)
+
+    # Start latency timer
+    start_time = time.time()
 
     # Retrieve relevant chunks
     results = retrieve_chunks(query)
@@ -99,8 +106,14 @@ Keep the response concise, clear, and conversational.
         # Send chunk to UI
         yield chunk, None
 
+    # Calculate total response latency in milliseconds
+    latency_ms = round((time.time() - start_time) * 1000, 2)
+
     # Save assistant response into memory
     add_to_history("assistant", full_answer)
+
+    # Log query interaction into SQLite
+    log_query(1, query, full_answer, latency_ms)
 
     # Send citations AFTER streaming finishes
     yield None, formatted_sources

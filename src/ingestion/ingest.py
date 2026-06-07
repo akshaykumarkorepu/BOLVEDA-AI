@@ -16,6 +16,9 @@ def ingest_pdf(pdf_path):
 
     print("Chunks created successfully")
 
+    # Count total chunks created
+    chunk_count = len(chunks)
+
     # Clean source names
     for chunk in chunks:
         source = chunk.metadata.get("source", "")
@@ -25,3 +28,6 @@ def ingest_pdf(pdf_path):
     create_vector_store(chunks)
 
     print("Vector database created successfully")
+
+    # Return chunk count for logging
+    return chunk_count
