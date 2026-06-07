@@ -232,3 +232,5 @@ temp/
 
 # Audio files
 *.mp3
+
+*.db
