@@ -6,7 +6,13 @@ from src.ingestion.ingest import ingest_pdf
 from src.memory.memory import clear_history
 from src.utils.utils import clear_vectorstore
 
-from db.db_logger import log_document
+from db.db_logger import (
+    log_document,
+    get_total_queries,
+    get_total_documents,
+    get_avg_latency,
+    get_recent_queries,
+)
 
 # Page setup
 st.set_page_config(page_title="BOLVEDA", page_icon="🤖", layout="wide")
@@ -53,6 +59,58 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # Sidebar analytics section
+    st.subheader("📊 AI Analytics")
+
+    # Fetch total query count from SQLite
+    total_queries = get_total_queries()
+
+    # Fetch total uploaded documents count
+    total_documents = get_total_documents()
+
+    # Fetch average AI response latency
+    avg_latency = get_avg_latency()
+
+    # Display analytics metrics
+    st.write(f"🧠 Total Queries: {total_queries}")
+
+    st.write(f"📄 Documents Uploaded: {total_documents}")
+
+    # Convert milliseconds to seconds
+    avg_latency_sec = avg_latency / 1000
+
+    # Display formatted latency
+    st.write(f"⚡ Avg Latency: {avg_latency_sec:.2f} sec")
+
+    # Divider line
+    st.markdown("---")
+
+    # Recent query history section
+    st.subheader("🕘 Recent Questions")
+
+    # Fetch recent query history from SQLite
+    recent_queries = get_recent_queries()
+
+    # Handle empty query history
+    if len(recent_queries) == 0:
+        st.caption("No recent queries yet.")
+
+    # Display clickable history buttons
+    else:
+        # Display recent questions
+        for question, answer, timestamp in recent_queries:
+            # Create clickable question button
+            if st.button(f"📌 {question}"):
+                # Store selected query in session state
+                st.session_state.selected_query = {
+                    "question": question,
+                    "answer": answer,
+                    "timestamp": timestamp,
+                }
+
+    # Divider line
+    st.markdown("---")
+
     # Clear chat button
     if st.button("Clear Chat"):
         st.session_state.messages = []
@@ -71,6 +129,33 @@ st.title("BOLVEDA AI")
 st.markdown("#### Transform documents into intelligent conversations")
 
 st.markdown("<br>", unsafe_allow_html=True)
+
+# Display selected query history in main area
+if "selected_query" in st.session_state:
+    # Fetch selected history item
+    selected = st.session_state.selected_query
+
+    # History viewer title
+    st.markdown("## 📜 Query History Viewer")
+
+    # Display selected question
+    st.markdown(f"### ❓ {selected['question']}")
+
+    # Display stored AI answer
+    st.write(selected["answer"])
+
+    # Display query timestamp
+    st.caption(f"🕒 {selected['timestamp']}")
+
+    # Close history viewer button
+    if st.button("❌ Close History Viewer"):
+        # Remove selected query from session state
+        del st.session_state.selected_query
+
+        # Rerun app to instantly update UI
+        st.rerun()
+
+    st.markdown("---")
 
 # Display previous chat history
 for message in st.session_state.messages:
