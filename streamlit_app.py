@@ -1,4 +1,5 @@
 import time
+import uuid
 import streamlit as st
 
 from src.rag.rag_pipeline import process_query
@@ -8,10 +9,12 @@ from src.utils.utils import clear_vectorstore
 
 from db.db_logger import (
     log_document,
+    log_query,
     get_total_queries,
     get_total_documents,
     get_avg_latency,
-    get_recent_queries,
+    get_recent_chats,
+    get_chat_messages,
 )
 
 # Page setup
@@ -86,27 +89,26 @@ with st.sidebar:
     st.markdown("---")
 
     # Recent query history section
-    st.subheader("🕘 Recent Questions")
+    st.subheader("🕘 Recent Chats")
 
     # Fetch recent query history from SQLite
-    recent_queries = get_recent_queries()
+    recent_chats = get_recent_chats()
 
     # Handle empty query history
-    if len(recent_queries) == 0:
+    if len(recent_chats) == 0:
         st.caption("No recent queries yet.")
 
     # Display clickable history buttons
     else:
-        # Display recent questions
-        for question, answer, timestamp in recent_queries:
-            # Create clickable question button
-            if st.button(f"📌 {question}"):
-                # Store selected query in session state
-                st.session_state.selected_query = {
-                    "question": question,
-                    "answer": answer,
-                    "timestamp": timestamp,
-                }
+        # Display recent chat sessions
+        for chat_id, title, timestamp in recent_chats:
+            # Create clickable chat button
+            if st.button(
+                f"📌 {title}",
+                key=f"chat_{chat_id}",
+            ):
+                # Store selected chat session
+                st.session_state.selected_chat_id = chat_id
 
     # Divider line
     st.markdown("---")
@@ -117,11 +119,20 @@ with st.sidebar:
 
         clear_history()
 
+        st.session_state.chat_id = str(uuid.uuid4())
+
         st.rerun()
 
-# Session memory
+# Initialize session memory
 if "messages" not in st.session_state:
+    # Store active chat messages
     st.session_state.messages = []
+
+
+# Create unique chat session ID
+if "chat_id" not in st.session_state:
+    # Generate unique conversation ID
+    st.session_state.chat_id = str(uuid.uuid4())
 
 # Main UI
 st.title("BOLVEDA AI")
@@ -130,29 +141,38 @@ st.markdown("#### Transform documents into intelligent conversations")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Display selected query history in main area
-if "selected_query" in st.session_state:
-    # Fetch selected history item
-    selected = st.session_state.selected_query
+# Display selected chat session
+if "selected_chat_id" in st.session_state:
+    # Fetch all messages from selected chat
+    chat_messages = get_chat_messages(st.session_state.selected_chat_id)
 
-    # History viewer title
-    st.markdown("## 📜 Query History Viewer")
+    # Chat history title
+    st.markdown("## 📜 Chat History Viewer")
 
-    # Display selected question
-    st.markdown(f"### ❓ {selected['question']}")
+    # Display full conversation thread
+    for question, answer, timestamp in chat_messages:
+        # Display user question
+        with st.chat_message(
+            "user",
+            avatar=":material/person:",
+        ):
+            st.markdown(question)
 
-    # Display stored AI answer
-    st.write(selected["answer"])
+        # Display AI response
+        with st.chat_message(
+            "assistant",
+            avatar=":material/smart_toy:",
+        ):
+            st.markdown(answer)
 
-    # Display query timestamp
-    st.caption(f"🕒 {selected['timestamp']}")
+            st.caption(f"🕒 {timestamp}")
 
     # Close history viewer button
-    if st.button("❌ Close History Viewer"):
-        # Remove selected query from session state
-        del st.session_state.selected_query
+    if st.button("❌ Close Chat Viewer"):
+        # Remove selected chat session
+        del st.session_state.selected_chat_id
 
-        # Rerun app to instantly update UI
+        # Refresh app UI
         st.rerun()
 
     st.markdown("---")
@@ -231,4 +251,12 @@ if user_input is not None and user_input.strip() != "":
         # Save assistant response
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
+        )
+
+        # Log query into SQLite database
+        log_query(
+            st.session_state.chat_id,
+            user_input,
+            full_response,
+            0,
         )

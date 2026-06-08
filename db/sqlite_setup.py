@@ -20,12 +20,11 @@ CREATE TABLE IF NOT EXISTS documents (
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS queries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    document_id INTEGER,
+    chat_id TEXT NOT NULL,         
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
     latency_ms REAL NOT NULL,
-    timestamp TEXT NOT NULL,
-    FOREIGN KEY (document_id) REFERENCES documents(id)
+    timestamp TEXT NOT NULL
 )
 """)
 

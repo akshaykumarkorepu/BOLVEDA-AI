@@ -36,7 +36,7 @@ def log_document(filename, chunk_count):
 
 
 # Logs user queries and AI responses into the queries table
-def log_query(document_id, question, answer, latency_ms):
+def log_query(chat_id, question, answer, latency_ms):
     # Open database connection
     conn = get_connection()
 
@@ -50,7 +50,7 @@ def log_query(document_id, question, answer, latency_ms):
     cursor.execute(
         """
         INSERT INTO queries (
-            document_id,
+            chat_id,
             question,
             answer,
             latency_ms,
@@ -59,7 +59,7 @@ def log_query(document_id, question, answer, latency_ms):
         VALUES (?, ?, ?, ?, ?)
         """,
         (
-            document_id,
+            chat_id,
             question,
             answer,
             latency_ms,
@@ -124,23 +124,58 @@ def get_avg_latency():
     return avg if avg else 0
 
 
-# Returns recent query history
-def get_recent_queries(limit=10):
+# Returns recent chat sessions
+def get_recent_chats(limit=10):
     conn = get_connection()
+
     cursor = conn.cursor()
 
-    # Fetch latest questions and answers
+    # Fetch first question from each chat session
+    cursor.execute(
+        """
+       SELECT
+           q1.chat_id,
+           q1.question,
+           MAX(q1.timestamp)
+       FROM queries q1
+       WHERE q1.id = (
+           SELECT MIN(q2.id)
+           FROM queries q2
+           WHERE q2.chat_id = q1.chat_id
+       )
+       GROUP BY q1.chat_id
+       ORDER BY MAX(q1.timestamp) DESC
+       LIMIT ?
+       """,
+        (limit,),
+    )
+
+    # Fetch all matching chat sessions
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+
+
+# Returns all messages from a specific chat session
+def get_chat_messages(chat_id):
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    # Fetch all questions and answers from selected chat
     cursor.execute(
         """
         SELECT question, answer, timestamp
         FROM queries
-        ORDER BY timestamp DESC
-        LIMIT ?
+        WHERE chat_id = ?
+        ORDER BY timestamp ASC
         """,
-        (limit,),
+        (chat_id,),
     )
 
-    # Fetch all matching rows
+    # Fetch all conversation rows
     rows = cursor.fetchall()
 
     conn.close()

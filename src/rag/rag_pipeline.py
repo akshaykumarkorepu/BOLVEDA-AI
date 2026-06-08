@@ -112,8 +112,5 @@ Keep the response concise, clear, and conversational.
     # Save assistant response into memory
     add_to_history("assistant", full_answer)
 
-    # Log query interaction into SQLite
-    log_query(1, query, full_answer, latency_ms)
-
     # Send citations AFTER streaming finishes
     yield None, formatted_sources
