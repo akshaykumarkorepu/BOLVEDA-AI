@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS evaluation_results (
     expected_answer TEXT NOT NULL,
     actual_answer TEXT NOT NULL,
     is_correct INTEGER NOT NULL,
+    question_type TEXT NOT NULL,
     FOREIGN KEY (query_id) REFERENCES queries(id)
 )
 """)

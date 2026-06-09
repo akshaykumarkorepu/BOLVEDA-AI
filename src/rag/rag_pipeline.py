@@ -4,8 +4,6 @@ from src.rag.retrieval import retrieve_chunks
 from src.rag.llm import stream_response
 from src.memory.memory import add_to_history, format_history
 
-from db.db_logger import log_query
-
 # SYSTEM PROMPT
 SYSTEM_PROMPT = """
 You are BOLVEDA, a professional AI assistant that answers questions strictly using the provided document context.
@@ -112,5 +110,10 @@ Keep the response concise, clear, and conversational.
     # Save assistant response into memory
     add_to_history("assistant", full_answer)
 
-    # Send citations AFTER streaming finishes
-    yield None, formatted_sources
+    yield (
+        None,
+        {
+            "sources": formatted_sources,
+            "latency_ms": latency_ms,
+        },
+    )

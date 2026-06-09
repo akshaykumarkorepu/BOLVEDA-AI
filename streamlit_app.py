@@ -96,7 +96,7 @@ with st.sidebar:
 
     # Handle empty query history
     if len(recent_chats) == 0:
-        st.caption("No recent queries yet.")
+        st.caption("No recent chats yet.")
 
     # Display clickable history buttons
     else:
@@ -210,6 +210,8 @@ if user_input is not None and user_input.strip() != "":
 
         sources = ""
 
+        latency_ms = 0
+
         # Thinking flow
         thinking_steps = [
             "🔍 Searching document...",
@@ -233,9 +235,10 @@ if user_input is not None and user_input.strip() != "":
                 # Typing cursor effect
                 response_placeholder.markdown(full_response + "▌")
 
-            # If citations arrive
             if citation:
-                sources = citation
+                sources = citation["sources"]
+
+                latency_ms = citation["latency_ms"]
 
         # Remove thinking flow
         thinking_placeholder.empty()
@@ -258,5 +261,5 @@ if user_input is not None and user_input.strip() != "":
             st.session_state.chat_id,
             user_input,
             full_response,
-            0,
+            latency_ms,
         )

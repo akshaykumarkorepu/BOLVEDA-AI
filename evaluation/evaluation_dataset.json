@@ -1,0 +1,182 @@
+
+[
+  {
+    "question": "What is an LLM and how does it work?",
+    "expected_answer": "A Large Language Model is a neural network trained on massive amounts of text to predict the next token. Through large-scale next-token prediction, it learns language patterns, reasoning, and factual knowledge.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is the difference between a base model and an instruction-tuned model?",
+    "expected_answer": "A base model only performs next-token prediction and does not follow instructions reliably. An instruction-tuned model is additionally trained using supervised fine-tuning and RLHF to follow instructions helpfully and safely.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What does temperature control in an LLM?",
+    "expected_answer": "Temperature controls randomness during token sampling. A temperature of 0 makes the model deterministic and more reliable for factual tasks, while higher temperatures increase creativity and hallucination risk.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is tokenization?",
+    "expected_answer": "Tokenization is the process of converting text into smaller units called tokens that the model can process. Modern LLMs usually use Byte Pair Encoding to split text into subword units.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "Why are LLMs bad at arithmetic?",
+    "expected_answer": "LLMs are bad at arithmetic because numbers tokenize poorly and the model predicts patterns instead of performing real mathematical computation. Arithmetic is often better handled using external tools.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is self-attention in Transformers?",
+    "expected_answer": "Self-attention allows each token to look at all other tokens in the sequence and determine which ones are most important for understanding context and relationships.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is RLHF?",
+    "expected_answer": "RLHF stands for Reinforcement Learning from Human Feedback. It uses human preference rankings and reinforcement learning techniques to align language models so they behave more helpfully and safely.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is an embedding?",
+    "expected_answer": "An embedding is a dense vector representation of text in high-dimensional space where semantically similar text produces similar vectors. Embeddings enable semantic search and retrieval.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is cosine similarity?",
+    "expected_answer": "Cosine similarity measures the angle between two embedding vectors to determine how semantically similar they are. A value closer to 1 means the vectors represent similar meanings.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "What is RAG?",
+    "expected_answer": "RAG stands for Retrieval-Augmented Generation. It retrieves relevant documents from an external knowledge base and injects them into the prompt so the LLM can generate grounded answers.",
+    "question_type": "factual"
+  },
+
+  {
+    "question": "Why does retrieval reduce hallucinations?",
+    "expected_answer": "Retrieval reduces hallucinations because the model answers using retrieved external context instead of relying entirely on memory. The correct information is present directly inside the prompt.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why is chunk overlap important in RAG systems?",
+    "expected_answer": "Chunk overlap is important because important information can appear near chunk boundaries. Overlap ensures that context is preserved across adjacent chunks and prevents retrieval failures.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why is cosine similarity preferred over Euclidean distance in semantic search?",
+    "expected_answer": "Cosine similarity focuses on the direction of vectors rather than their magnitude, making it better for comparing semantic meaning even when text lengths differ significantly.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why does BOLVEDA use RAG instead of fine-tuning?",
+    "expected_answer": "BOLVEDA uses RAG because users upload private and constantly changing PDFs that are not part of model training data. RAG also enables citations and can be built much faster and cheaper than fine-tuning.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why is a vector database needed in RAG systems?",
+    "expected_answer": "A vector database is needed because traditional SQL databases cannot efficiently perform nearest-neighbor search on high-dimensional embeddings. Vector databases provide fast semantic retrieval using ANN indexes.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why is temperature set to 0 in factual RAG systems?",
+    "expected_answer": "Temperature is set to 0 in factual RAG systems to reduce randomness and make outputs deterministic and consistent. This minimizes hallucinations and improves reliability.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why are embeddings useful for semantic search?",
+    "expected_answer": "Embeddings capture semantic meaning rather than exact keywords, allowing the system to retrieve conceptually related information even when the wording differs.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why can't we simply pass an entire PDF directly into the prompt?",
+    "expected_answer": "Entire PDFs are usually too large for the context window, increase latency and cost significantly, and can suffer from the lost-in-the-middle problem where important information becomes harder for the model to focus on.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why is the anti-hallucination prompt important in BOLVEDA?",
+    "expected_answer": "The anti-hallucination prompt forces the model to answer only from retrieved context and explicitly reject unsupported questions. This significantly reduces fabricated answers.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Why are benchmark datasets important for evaluating AI systems?",
+    "expected_answer": "Benchmark datasets provide consistent and repeatable evaluation conditions. They allow developers to scientifically compare system performance across different optimizations and model changes.",
+    "question_type": "inferential"
+  },
+
+  {
+    "question": "Who won the FIFA World Cup in 2018?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "What is the capital of Japan?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "Who invented the telephone?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "What is the latest iPhone model?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "Which country has the largest population in the world?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "Who is the CEO of Tesla?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "What is Newton's second law?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "Who painted the Mona Lisa?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "What is the boiling point of water?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  },
+
+  {
+    "question": "Which company created Android?",
+    "expected_answer": "I could not find that information in the provided documents.",
+    "question_type": "out_of_scope"
+  }
+]
