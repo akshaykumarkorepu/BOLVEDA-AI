@@ -7,6 +7,14 @@ chat_history = []
 
 # Adds a user or assistant message into memory
 def add_to_history(role, message):
+    # Prevent empty memory entries
+    if not role or not message:
+        return
+
+    # Allow only valid roles
+    if role not in ["user", "assistant"]:
+        return
+
     chat_history.append({"role": role, "message": message})
 
     # Remove oldest message if memory exceeds limit
@@ -26,6 +34,10 @@ def clear_history():
 
 # Converts conversation history into prompt-friendly text
 def format_history():
+    # Handle empty history safely
+    if not chat_history:
+        return ""
+
     formatted = ""
 
     for chat in chat_history:

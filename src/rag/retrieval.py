@@ -6,8 +6,27 @@ def retrieve_chunks(query, k=10):
     if query is None or query.strip() == "":
         return []
 
-    vector_store = load_vectorstore()
+    # Prevent invalid retrieval size
+    if k <= 0:
+        return []
 
-    results = vector_store.max_marginal_relevance_search(query, k=k, fetch_k=20)
+    try:
+        # Load vector database
+        vector_store = load_vectorstore()
 
-    return results
+        # Retrieve relevant chunks
+        results = vector_store.max_marginal_relevance_search(
+            query,
+            k=k,
+            fetch_k=20,
+        )
+
+        # Handle empty retrieval safely
+        if not results:
+            return []
+
+        return results
+
+    except Exception:
+        # Graceful retrieval failure
+        return []

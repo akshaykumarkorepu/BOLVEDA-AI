@@ -18,6 +18,9 @@ cursor.execute(
 
 accuracy = cursor.fetchone()[0]
 
+if accuracy is None:
+    accuracy = 0
+
 print("\n📊 OVERALL ACCURACY")
 print(f"Accuracy: {accuracy}%")
 

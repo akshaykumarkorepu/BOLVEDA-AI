@@ -8,6 +8,7 @@ from src.rag.embeddings import get_embedding_model
 
 @st.cache_resource
 def load_vectorstore():
+    os.makedirs("chroma_db", exist_ok=True)
     embedding_model = get_embedding_model()
 
     vector_store = Chroma(
@@ -25,4 +26,8 @@ def clear_vectorstore():
     vectorstore_path = "chroma_db"
 
     if os.path.exists(vectorstore_path):
-        shutil.rmtree(vectorstore_path)
+        try:
+            shutil.rmtree(vectorstore_path)
+
+        except Exception:
+            pass

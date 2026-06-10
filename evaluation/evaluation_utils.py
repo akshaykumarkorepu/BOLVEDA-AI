@@ -1,8 +1,5 @@
 import time
-
 import string
-
-import sqlite3
 
 from src.rag.rag_pipeline import process_query
 
@@ -43,6 +40,10 @@ def get_full_response(question):
 
 
 def evaluate_answer(expected, actual):
+    # Prevent empty evaluation
+    if not expected or not actual:
+        return 0, 0
+
     # Common meaningless words
     stopwords = {
         "the",
@@ -70,6 +71,10 @@ def evaluate_answer(expected, actual):
     expected_words = {word for word in expected.split() if word not in stopwords}
 
     actual_words = {word for word in actual.split() if word not in stopwords}
+
+    # Prevent division by zero
+    if len(expected_words) == 0:
+        return 0, 0
 
     # Calculate overlap
     matched_words = expected_words.intersection(actual_words)
@@ -110,36 +115,3 @@ def detect_hallucination(actual_answer, retrieved_chunks):
         return 1
 
     return 0
-
-
-def save_evaluation_result(
-    expected_answer,
-    actual_answer,
-    is_correct,
-    question_type,
-):
-    conn = sqlite3.connect("app.db")
-
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        INSERT INTO evaluation_results (
-            expected_answer,
-            actual_answer,
-            is_correct,
-            question_type
-        )
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            expected_answer,
-            actual_answer,
-            is_correct,
-            question_type,
-        ),
-    )
-
-    conn.commit()
-
-    conn.close()

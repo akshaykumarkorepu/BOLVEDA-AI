@@ -39,8 +39,18 @@ def process_query(query):
     # Start latency timer
     start_time = time.time()
 
-    # Retrieve relevant chunks
-    results = retrieve_chunks(query)
+    # Retrieve relevant chunks safely
+    try:
+        results = retrieve_chunks(query)
+
+    except Exception:
+        fallback = "I encountered an issue while searching the document."
+
+        add_to_history("assistant", fallback)
+
+        yield fallback, None
+
+        return
 
     # Handle empty retrieval
     if not results:
@@ -57,8 +67,9 @@ def process_query(query):
 
     # Loop through all retrieved chunks
     for result in results:
-        source = result.metadata.get("source")
-        page = result.metadata.get("page_label")
+        source = result.metadata.get("source", "Unknown Source")
+
+        page = result.metadata.get("page_label", "Unknown Page")
 
         # Create formatted citation
         sources.append(f"{source} - Page {page}")
@@ -71,6 +82,16 @@ def process_query(query):
 
     # Combine retrieved chunks into one context string
     context = "\n\n".join([result.page_content for result in results])
+
+    # Handle empty context safely
+    if not context.strip():
+        fallback = "I could not find enough relevant information in the document."
+
+        add_to_history("assistant", fallback)
+
+        yield fallback, None
+
+        return
 
     # Get formatted conversation history
     history = format_history()
@@ -96,13 +117,27 @@ Keep the response concise, clear, and conversational.
     # Store full streamed response
     full_answer = ""
 
-    # Stream chunks from LLM
-    for chunk in stream_response(prompt):
-        # Keep building final answer
-        full_answer += chunk
+    # Stream chunks from LLM safely
+    try:
+        for chunk in stream_response(prompt):
+            # Keep building final answer
+            full_answer += chunk
 
-        # Send chunk to UI
-        yield chunk, None
+            # Send chunk to UI
+            yield chunk, None
+
+    except Exception:
+        fallback = "I encountered an issue while generating the response."
+
+        add_to_history("assistant", fallback)
+
+        yield fallback, None
+
+        return
+
+    # Handle empty model response
+    if not full_answer.strip():
+        full_answer = "I could not generate a valid response from the document."
 
     # Calculate total response latency in milliseconds
     latency_ms = round((time.time() - start_time) * 1000, 2)

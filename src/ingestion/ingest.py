@@ -6,15 +6,31 @@ from src.rag.embeddings import create_vector_store
 
 
 def ingest_pdf(pdf_path):
-    # Step 1: Load PDF
-    documents = load_pdf(pdf_path)
+    # Validate PDF path
+    if not pdf_path or not os.path.exists(pdf_path):
+        raise FileNotFoundError("PDF file not found.")
 
-    print("PDF loaded successfully")
+    try:
+        # Step 1: Load PDF
+        documents = load_pdf(pdf_path)
+
+        print("PDF loaded successfully")
+
+    except Exception:
+        raise Exception("Failed to load PDF.")
+
+    # Prevent empty document ingestion
+    if not documents:
+        raise Exception("No readable content found in PDF.")
 
     # Step 2: Create chunks
     chunks = create_chunks(documents)
 
     print("Chunks created successfully")
+
+    # Prevent empty chunk creation
+    if not chunks:
+        raise Exception("Failed to create document chunks.")
 
     # Count total chunks created
     chunk_count = len(chunks)
@@ -25,9 +41,11 @@ def ingest_pdf(pdf_path):
         chunk.metadata["source"] = os.path.basename(source)
 
     # Step 3: Create vector database
-    create_vector_store(chunks)
+    vector_store = create_vector_store(chunks)
+
+    if vector_store is None:
+        raise Exception("Failed to create vector database.")
 
     print("Vector database created successfully")
 
-    # Return chunk count for logging
     return chunk_count

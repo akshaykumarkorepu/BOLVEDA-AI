@@ -7,7 +7,12 @@ load_dotenv()
 
 
 def get_groq_client():
-    return Groq(api_key=os.getenv("GROQ_API_KEY"))
+    api_key = os.getenv("GROQ_API_KEY")
+
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is missing.")
+
+    return Groq(api_key=api_key)
 
 
 def stream_response(prompt):
@@ -25,6 +30,9 @@ def stream_response(prompt):
     )
 
     for chunk in response:
+        if not chunk.choices:
+            continue
+
         delta = chunk.choices[0].delta
 
         if hasattr(delta, "content") and delta.content is not None:
