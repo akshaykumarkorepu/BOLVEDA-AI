@@ -115,5 +115,6 @@ Keep the response concise, clear, and conversational.
         {
             "sources": formatted_sources,
             "latency_ms": latency_ms,
+            "retrieved_chunks": context,
         },
     )

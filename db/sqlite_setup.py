@@ -30,14 +30,21 @@ CREATE TABLE IF NOT EXISTS queries (
 
 # Create evaluation table for future RAG benchmarking/testing
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS evaluation_results (
+   CREATE TABLE IF NOT EXISTS evaluation_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    query_id INTEGER,
+    question TEXT NOT NULL,
     expected_answer TEXT NOT NULL,
     actual_answer TEXT NOT NULL,
+    retrieved_chunks TEXT,
+    similarity_score REAL,
     is_correct INTEGER NOT NULL,
+    hallucination_detected INTEGER,
     question_type TEXT NOT NULL,
-    FOREIGN KEY (query_id) REFERENCES queries(id)
+    retrieval_time_ms REAL,
+    generation_time_ms REAL,
+    chunk_size INTEGER,
+    chunk_overlap INTEGER,
+    created_at TEXT NOT NULL
 )
 """)
 
