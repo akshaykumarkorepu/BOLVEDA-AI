@@ -1,5 +1,9 @@
 import json
 
+from evaluation.build_evaluation_db import build
+
+build()
+
 from evaluation.evaluation_utils import (
     get_full_response,
     evaluate_answer,
@@ -34,7 +38,7 @@ correct_answers = 0
 
 
 # Run evaluation questions
-for item in dataset[:5]:
+for item in dataset:
     try:
         question = item["question"]
         expected = item["expected_answer"]
@@ -71,7 +75,6 @@ for item in dataset[:5]:
             is_correct=is_correct,
             hallucination_detected=hallucination_detected,
             question_type=question_type,
-            retrieval_time_ms=0,
             generation_time_ms=generation_time_ms,
             chunk_size=1000,
             chunk_overlap=200,
@@ -90,7 +93,7 @@ for item in dataset[:5]:
         else:
             print("❌ INCORRECT")
 
-            print("=" * 60)
+        print("=" * 60)
 
     except Exception as e:
         print(f"Evaluation failed: {e}")
@@ -99,4 +102,4 @@ for item in dataset[:5]:
 # Final evaluation summary
 print("\nFINAL RESULTS")
 
-print(f"Correct Answers: {correct_answers}/{len(dataset[:5])}")
+print(f"Correct Answers: {correct_answers}/{len(dataset)}")

@@ -18,7 +18,6 @@ cursor.execute("""
     is_correct INTEGER NOT NULL,
     hallucination_detected INTEGER,
     question_type TEXT NOT NULL,
-    retrieval_time_ms REAL,
     generation_time_ms REAL,
     chunk_size INTEGER,
     chunk_overlap INTEGER,

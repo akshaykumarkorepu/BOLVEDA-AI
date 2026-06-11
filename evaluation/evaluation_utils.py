@@ -1,7 +1,9 @@
 import time
 import string
 
-from src.rag.rag_pipeline import process_query
+from evaluation.evaluation_rag_pipeline import (
+    process_evaluation_query,
+)
 
 
 def get_full_response(question):
@@ -15,15 +17,13 @@ def get_full_response(question):
     generation_time_ms = 0
 
     # Run streaming generator
-    for chunk, metadata in process_query(question):
+    for chunk, metadata in process_evaluation_query(question):
         # Collect streamed chunks
         if chunk:
             full_response += chunk
 
         # Capture final metadata
         if metadata:
-            generation_time_ms = metadata.get("latency_ms", 0)
-
             retrieved_chunks = metadata.get("retrieved_chunks", "")
 
     # End timing

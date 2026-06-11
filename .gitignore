@@ -234,3 +234,23 @@ temp/
 *.mp3
 
 *.db
+
+# Database
+app.db
+
+# Chroma vector stores
+chroma_db/
+evaluation/evaluation_chroma_db/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store

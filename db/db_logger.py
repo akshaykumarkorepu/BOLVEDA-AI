@@ -17,7 +17,6 @@ def log_evaluation_result(
     is_correct,
     hallucination_detected,
     question_type,
-    retrieval_time_ms,
     generation_time_ms,
     chunk_size,
     chunk_overlap,
@@ -43,13 +42,12 @@ def log_evaluation_result(
             is_correct,
             hallucination_detected,
             question_type,
-            retrieval_time_ms,
             generation_time_ms,
             chunk_size,
             chunk_overlap,
             created_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             question,
@@ -60,7 +58,6 @@ def log_evaluation_result(
             is_correct,
             hallucination_detected,
             question_type,
-            retrieval_time_ms,
             generation_time_ms,
             chunk_size,
             chunk_overlap,
