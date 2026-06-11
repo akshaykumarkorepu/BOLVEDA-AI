@@ -41,7 +41,7 @@ def process_query(query):
 
     # Retrieve relevant chunks safely
     try:
-        results = retrieve_chunks(query)
+        results = retrieve_chunks(query, k=5)
 
     except Exception:
         fallback = "I encountered an issue while searching the document."
@@ -62,11 +62,14 @@ def process_query(query):
 
         return
 
+    # Show only top 3 citations
+    citation_results = results[:3]
+
     # Store citations
     sources = []
 
     # Loop through all retrieved chunks
-    for result in results:
+    for result in citation_results:
         source = result.metadata.get("source", "Unknown Source")
 
         page = result.metadata.get("page_label", "Unknown Page")
@@ -75,7 +78,7 @@ def process_query(query):
         sources.append(f"{source} - Page {page}")
 
     # Remove duplicate citations
-    unique_sources = list(set(sources))
+    unique_sources = list(dict.fromkeys(sources))
 
     # Format citations nicely
     formatted_sources = "\n".join([f"- {source}" for source in unique_sources])

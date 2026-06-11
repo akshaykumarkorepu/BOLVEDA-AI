@@ -19,6 +19,10 @@ if "messages" not in st.session_state:
 if "processed_files" not in st.session_state:
     st.session_state.processed_files = set()
 
+# Reset file uploader when ending session
+if "uploader_key" not in st.session_state:
+    st.session_state.uploader_key = 0
+
 # Sidebar
 with st.sidebar:
     st.title("🧠 Your AI Workspace")
@@ -29,7 +33,11 @@ with st.sidebar:
 
     st.subheader("Upload PDF")
 
-    uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
+    uploaded_file = st.file_uploader(
+        "Upload a PDF",
+        type="pdf",
+        key=f"uploader_{st.session_state.uploader_key}",
+    )
 
     # Validate uploaded file
     if uploaded_file:
@@ -63,7 +71,7 @@ with st.sidebar:
                     clear_vectorstore()
 
                     # Process PDF and generate embeddings
-                    ingest_pdf(temp_path)
+                    ingest_pdf(temp_path, uploaded_file.name)
 
                     st.success("✅ PDF processed successfully!")
 
@@ -115,9 +123,14 @@ with st.sidebar:
     if st.button("End Document Session"):
         clear_vectorstore()
 
+        clear_history()
+
         st.session_state.messages = []
 
         st.session_state.processed_files = set()
+
+        # Reset file uploader
+        st.session_state.uploader_key += 1
 
         st.success("✅ Document session ended.")
 
