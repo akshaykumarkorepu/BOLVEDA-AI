@@ -70,5 +70,3 @@ def log_evaluation_result(
 
     # Close database connection safely
     conn.close()
-
-    print(f"Evaluation logged: {question}")

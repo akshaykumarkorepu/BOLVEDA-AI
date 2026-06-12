@@ -11,7 +11,3 @@ def load_vectorstore(chroma_path):
     )
 
     return vector_store
-
-
-def clear_vectorstore():
-    print("CLEAR VECTORSTORE CALLED")

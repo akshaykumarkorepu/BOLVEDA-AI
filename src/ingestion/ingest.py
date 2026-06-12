@@ -18,8 +18,6 @@ def ingest_pdf(
         # Step 1: Load PDF
         documents = load_pdf(pdf_path)
 
-        print("PDF loaded successfully")
-
     except Exception:
         raise Exception("Failed to load PDF.")
 
@@ -29,8 +27,6 @@ def ingest_pdf(
 
     # Step 2: Create chunks
     chunks = create_chunks(documents)
-
-    print("Chunks created successfully")
 
     # Prevent empty chunk creation
     if not chunks:
@@ -56,7 +52,5 @@ def ingest_pdf(
 
     if vector_store is None:
         raise Exception("Failed to create vector database.")
-
-    print("Vector database created successfully")
 
     return chunk_count

@@ -31,6 +31,5 @@ def create_vector_store(
 
         return vector_store
 
-    except Exception as e:
-        print(f"VECTOR STORE ERROR: {e}")
+    except Exception:
         raise

@@ -126,13 +126,7 @@ Keep the response concise, clear, and conversational.
 
             yield chunk, None
 
-    except Exception as e:
-        print("\n" + "=" * 80)
-        print("LLM GENERATION ERROR")
-        print(type(e).__name__)
-        print(str(e))
-        print("=" * 80)
-
+    except Exception:
         fallback = "I encountered an issue while generating the response."
 
         add_to_history("assistant", fallback)

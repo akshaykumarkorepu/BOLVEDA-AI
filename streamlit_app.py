@@ -1,13 +1,13 @@
 import time
 import os
 import uuid
+import shutil
 import tempfile
 import streamlit as st
 
 from src.rag.rag_pipeline import process_query
 from src.ingestion.ingest import ingest_pdf
 from src.memory.memory import clear_history
-from src.utils.utils import clear_vectorstore
 
 # Page setup
 st.set_page_config(page_title="BOLVEDA", page_icon="🤖", layout="wide")
@@ -71,9 +71,6 @@ with st.sidebar:
 
                         temp_path = temp_file.name
 
-                    # Clear previous vector database
-                    # clear_vectorstore()
-
                     # Process PDF and generate embeddings
                     ingest_pdf(
                         temp_path,
@@ -86,8 +83,9 @@ with st.sidebar:
                     # Mark as processed
                     st.session_state.processed_files.add(uploaded_file.name)
 
-                except Exception as e:
-                    st.exception(e)
+                except Exception:
+                    st.error("❌ Failed to process the PDF.")
+
                     st.stop()
 
                 finally:
@@ -128,7 +126,10 @@ with st.sidebar:
 
     # End document session
     if st.button("End Document Session"):
-        clear_vectorstore()
+        old_path = st.session_state.chroma_path
+
+        if os.path.exists(old_path):
+            shutil.rmtree(old_path)
 
         clear_history()
 
@@ -138,7 +139,6 @@ with st.sidebar:
 
         st.session_state.chroma_path = f"temp_chroma/{uuid.uuid4()}"
 
-        # Reset file uploader
         st.session_state.uploader_key += 1
 
         st.success("✅ Document session ended.")
@@ -189,8 +189,6 @@ if user_input and user_input.strip():
 
         sources = ""
 
-        latency_ms = 0
-
         # Thinking flow
         thinking_steps = [
             "🔍 Searching document...",
@@ -218,14 +216,14 @@ if user_input and user_input.strip():
                 if citation:
                     sources = citation["sources"]
 
-                    latency_ms = citation["latency_ms"]
-
-        except Exception as e:
+        except Exception:
             thinking_placeholder.empty()
 
-            st.exception(e)
+            st.error(
+                "❌ I encountered an issue while generating the response. Please try again."
+            )
 
-            raise
+            st.stop()
 
         # Remove thinking flow
         thinking_placeholder.empty()
