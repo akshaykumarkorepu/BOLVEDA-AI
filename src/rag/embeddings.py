@@ -30,5 +30,6 @@ def create_vector_store(chunks):
 
         return vector_store
 
-    except Exception:
-        return None
+    except Exception as e:
+        print(f"VECTOR STORE ERROR: {e}")
+        raise
