@@ -78,8 +78,9 @@ with st.sidebar:
                     # Mark as processed
                     st.session_state.processed_files.add(uploaded_file.name)
 
-                except Exception as e:
-                    st.exception(e)
+                except Exception:
+                    st.error("❌ Failed to process PDF. Please upload a valid PDF.")
+                    st.stop()
 
                     st.stop()
 
