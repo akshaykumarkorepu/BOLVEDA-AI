@@ -254,3 +254,16 @@ venv/
 
 # macOS
 .DS_Store
+
+# Evaluation artifacts
+evaluation/results/
+evaluation/reports/
+
+# Chroma persistent storage
+db/chroma_db/
+
+# Streamlit cache
+.streamlit/cache/
+
+# OS/editor files
+.vscode/settings.json

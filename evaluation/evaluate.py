@@ -2,8 +2,6 @@ import json
 
 from evaluation.build_evaluation_db import build
 
-build()
-
 from evaluation.evaluation_utils import (
     get_full_response,
     evaluate_answer,
@@ -11,6 +9,9 @@ from evaluation.evaluation_utils import (
 )
 
 from db.db_logger import log_evaluation_result
+
+# Build fresh evaluation database
+build()
 
 # Load evaluation dataset safely
 try:

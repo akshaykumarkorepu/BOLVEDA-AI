@@ -3,7 +3,7 @@ from src.ingestion.chunking import create_chunks
 from src.rag.embeddings import create_vector_store
 
 
-docs = load_pdf("data/sample.pdf")
+docs = load_pdf("tests/test_data/sample.pdf")
 
 chunks = create_chunks(docs)
 
