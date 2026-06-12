@@ -1,4 +1,5 @@
 import streamlit as st
+import tempfile
 import shutil
 import os
 
@@ -6,7 +7,7 @@ from langchain_community.vectorstores import Chroma
 from src.rag.embeddings import get_embedding_model
 
 # Absolute ChromaDB path
-CHROMA_DB_PATH = os.path.join(os.getcwd(), "chroma_db")
+CHROMA_DB_PATH = os.path.join(tempfile.gettempdir(), "chroma_db")
 
 
 @st.cache_resource
