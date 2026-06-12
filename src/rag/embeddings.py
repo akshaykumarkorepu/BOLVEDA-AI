@@ -1,5 +1,6 @@
 import os
 import tempfile
+import shutil
 import streamlit as st
 
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -20,6 +21,9 @@ def create_vector_store(chunks):
     # Prevent empty vector creation
     if not chunks:
         return None
+
+    if os.path.exists(CHROMA_DB_PATH):
+        shutil.rmtree(CHROMA_DB_PATH, ignore_errors=True)
 
     os.makedirs(CHROMA_DB_PATH, exist_ok=True)
 
