@@ -267,3 +267,14 @@ db/chroma_db/
 
 # OS/editor files
 .vscode/settings.json
+
+# Chroma vector databases
+chroma_db/
+temp_chroma/
+
+# Chroma SQLite files
+*.sqlite3
+*.sqlite
+
+# Chroma generated binary files
+*.bin

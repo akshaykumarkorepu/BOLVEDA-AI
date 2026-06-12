@@ -3,8 +3,6 @@ import streamlit as st
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
-CHROMA_DB_PATH = "chroma_db"
-
 
 @st.cache_resource
 def get_embedding_model():
@@ -12,7 +10,10 @@ def get_embedding_model():
 
 
 # Create vector databases from chunks
-def create_vector_store(chunks):
+def create_vector_store(
+    chunks,
+    chroma_path,
+):
     embedding_model = get_embedding_model()
 
     # Prevent empty vector creation
@@ -25,7 +26,7 @@ def create_vector_store(chunks):
         vector_store = Chroma.from_documents(
             documents=chunks,
             embedding=embedding_model,
-            persist_directory=CHROMA_DB_PATH,
+            persist_directory=chroma_path,
         )
 
         return vector_store

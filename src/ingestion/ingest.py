@@ -5,7 +5,11 @@ from src.ingestion.chunking import create_chunks
 from src.rag.embeddings import create_vector_store
 
 
-def ingest_pdf(pdf_path, original_filename=None):
+def ingest_pdf(
+    pdf_path,
+    chroma_path,
+    original_filename=None,
+):
     # Validate PDF path
     if not pdf_path or not os.path.exists(pdf_path):
         raise FileNotFoundError("PDF file not found.")
@@ -45,7 +49,10 @@ def ingest_pdf(pdf_path, original_filename=None):
             chunk.metadata["source"] = os.path.basename(source)
 
     # Step 3: Create vector database
-    vector_store = create_vector_store(chunks)
+    vector_store = create_vector_store(
+        chunks,
+        chroma_path,
+    )
 
     if vector_store is None:
         raise Exception("Failed to create vector database.")

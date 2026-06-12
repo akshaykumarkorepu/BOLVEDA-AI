@@ -1,5 +1,6 @@
 import time
 import os
+import uuid
 import tempfile
 import streamlit as st
 
@@ -22,6 +23,9 @@ if "processed_files" not in st.session_state:
 # Reset file uploader when ending session
 if "uploader_key" not in st.session_state:
     st.session_state.uploader_key = 0
+
+if "chroma_path" not in st.session_state:
+    st.session_state.chroma_path = f"temp_chroma/{uuid.uuid4()}"
 
 # Sidebar
 with st.sidebar:
@@ -68,10 +72,14 @@ with st.sidebar:
                         temp_path = temp_file.name
 
                     # Clear previous vector database
-                    clear_vectorstore()
+                    # clear_vectorstore()
 
                     # Process PDF and generate embeddings
-                    ingest_pdf(temp_path, uploaded_file.name)
+                    ingest_pdf(
+                        temp_path,
+                        st.session_state.chroma_path,
+                        uploaded_file.name,
+                    )
 
                     st.success("✅ PDF processed successfully!")
 
@@ -127,6 +135,8 @@ with st.sidebar:
         st.session_state.messages = []
 
         st.session_state.processed_files = set()
+
+        st.session_state.chroma_path = f"temp_chroma/{uuid.uuid4()}"
 
         # Reset file uploader
         st.session_state.uploader_key += 1
@@ -210,12 +220,12 @@ if user_input and user_input.strip():
 
                     latency_ms = citation["latency_ms"]
 
-        except Exception:
+        except Exception as e:
             thinking_placeholder.empty()
 
-            st.error("❌ Failed to generate response.")
+            st.exception(e)
 
-            st.stop()
+            raise
 
         # Remove thinking flow
         thinking_placeholder.empty()
