@@ -1,12 +1,9 @@
-import os
-import tempfile
-import shutil
 import streamlit as st
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
-CHROMA_DB_PATH = os.path.join(tempfile.gettempdir(), "chroma_db")
+CHROMA_DB_PATH = "chroma_db"
 
 
 @st.cache_resource
@@ -21,11 +18,6 @@ def create_vector_store(chunks):
     # Prevent empty vector creation
     if not chunks:
         return None
-
-    if os.path.exists(CHROMA_DB_PATH):
-        shutil.rmtree(CHROMA_DB_PATH, ignore_errors=True)
-
-    os.makedirs(CHROMA_DB_PATH, exist_ok=True)
 
     # Create and store embeddings
     try:

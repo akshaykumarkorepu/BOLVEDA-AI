@@ -1,18 +1,15 @@
 import streamlit as st
-import tempfile
 import shutil
 import os
 
 from langchain_community.vectorstores import Chroma
 from src.rag.embeddings import get_embedding_model
 
-CHROMA_DB_PATH = os.path.join(tempfile.gettempdir(), "chroma_db")
+CHROMA_DB_PATH = "chroma_db"
 
 
 @st.cache_resource
 def load_vectorstore():
-    os.makedirs(CHROMA_DB_PATH, exist_ok=True)
-
     embedding_model = get_embedding_model()
 
     vector_store = Chroma(
@@ -33,5 +30,3 @@ def clear_vectorstore():
 
         except Exception:
             pass
-
-    os.makedirs(CHROMA_DB_PATH, exist_ok=True)
