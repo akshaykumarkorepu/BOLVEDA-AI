@@ -27,6 +27,10 @@
 
 <br/>
 
+## 🚀 [Click here to try BOLVEDA Live →](https://bolveda-ai.streamlit.app)
+
+<br/>
+
 [**Architecture**](#-system-architecture) &nbsp;·&nbsp; [**Evaluation**](#-evaluation-framework) &nbsp;·&nbsp; [**Results**](#-benchmark-results) &nbsp;·&nbsp; [**Setup**](#-getting-started) &nbsp;·&nbsp; [**Interview Guide**](#-interview-discussion-points)
 
 </div>
@@ -568,13 +572,13 @@ BOLVEDA is built to handle failure at every layer gracefully, without crashing o
 
 ## 🖼️ Application Screenshots
 
-> _Screenshots will be added after deployment. Place images in `assets/` and update paths below._
+> _Add screenshots to the `assets/` folder and update the paths below after deployment._
 
 | Upload & Ingest | Conversational QA |
 |---|---|
 | ![Upload Screen](assets/homepage.png) | ![Chat Screen](assets/question_answering.png) |
 
-| Evaluation Report | Session Architecture |
+| Evaluation Report | Session Isolation |
 |---|---|
 | ![Eval Report](assets/screenshot_eval.png) | ![Session DB](assets/screenshot_session.png) |
 
@@ -593,7 +597,7 @@ GROQ_API_KEY   # free at console.groq.com
 
 ```bash
 # Clone
-git clone https://github.com/akshaykumarkorepu/bolveda.git
+git clone https://github.com/akshaykumarkorepu/BOLVEDA-AI.git
 cd bolveda
 
 # Virtual environment
@@ -631,10 +635,8 @@ python evaluation/evaluate.py
 2. Go to share.streamlit.io → connect repo
 3. Set streamlit_app.py as entry point
 4. Add GROQ_API_KEY under Settings → Secrets
-5. Deploy — zero infrastructure required
+5. Deploy — then replace the Live Demo link at the top of this README
 ```
-
-**Live Demo:** `https://bolveda-ai.streamlit.app` _(update after deployment)_
 
 ---
 
@@ -660,7 +662,7 @@ Building BOLVEDA went well beyond "connect an LLM to some documents". The real e
 
 - **Production failure modes** — the shared ChromaDB ReadOnlyError showed that local file-based databases have hard concurrency constraints that require architectural solutions, not config tweaks
 - **Retrieval quality** — understanding why top-K fails on repetitive documents and how MMR fixes it, confirmed through benchmark scoring
-- **Database design** — choosing the right store for semantic search vs structured analytics are two separate problems that need two separate tools
+- **Database design** — semantic search and structured analytics are two separate problems that need two separate tools
 - **Evaluation architecture** — why the eval DB must be completely isolated from the runtime DB to produce results that are reproducible and comparable over time
 - **Evaluator limitations** — the 3 missed inferential questions proved that keyword overlap is insufficient for semantic QA; the model was right, the metric was wrong
 - **Privacy engineering** — session-scoped, auto-deleted vectorstores as a principled default rather than an afterthought
