@@ -27,7 +27,7 @@
 
 <br/>
 
-## 🚀 [Click here to try BOLVEDA Live →](https://bolveda-ai.streamlit.app)
+## 🚀 [Click here to try BOLVEDA Live →](https://your-app.streamlit.app)
 
 <br/>
 
@@ -418,7 +418,7 @@ This exposed a known limitation of keyword-overlap evaluation for reasoning ques
 ## 📁 Project Structure
 
 ```
-BOLVEDA/
+BOLVEDA-AI/
 │
 ├── streamlit_app.py                # Application entry point
 ├── requirements.txt
@@ -441,7 +441,8 @@ BOLVEDA/
 │   ├── evaluation_retrieval.py     # Separate retrieval over evaluation vectorstore
 │   ├── evaluation_rag_pipeline.py  # End-to-end RAG pipeline for evaluation
 │   ├── evaluation_utils.py         # Scoring, similarity, hallucination detection
-│   └── evaluate.py                 # Single entry point — runs full benchmark
+│   ├── evaluate.py                 # Single entry point — runs full benchmark
+│   └── metrics.py                  # Generates overall and category-wise accuracy metrics
 │
 ├── db/
 │   ├── sqlite_setup.py             # Schema creation + DB initialization
@@ -572,15 +573,17 @@ BOLVEDA is built to handle failure at every layer gracefully, without crashing o
 
 ## 🖼️ Application Screenshots
 
-> _Add screenshots to the `assets/` folder and update the paths below after deployment._
+### Home Page
 
-| Upload & Ingest | Conversational QA |
-|---|---|
-| ![Upload Screen](assets/homepage.png) | ![Chat Screen](assets/question_answering.png) |
+<div align="center">
+  <img src="assets/homepage.png" width="90%">
+</div>
 
-| Evaluation Report | Session Isolation |
-|---|---|
-| ![Eval Report](assets/screenshot_eval.png) | ![Session DB](assets/screenshot_session.png) |
+### Question Answering
+
+<div align="center">
+  <img src="assets/question_answering.png" width="90%">
+</div>
 
 ---
 
@@ -598,7 +601,7 @@ GROQ_API_KEY   # free at console.groq.com
 ```bash
 # Clone
 git clone https://github.com/akshaykumarkorepu/BOLVEDA-AI.git
-cd bolveda
+cd BOLVEDA-AI
 
 # Virtual environment
 python -m venv venv
@@ -620,13 +623,21 @@ Navigate to `http://localhost:8501`, upload a PDF, and start asking questions.
 ### Run Evaluation
 
 ```bash
-# Build benchmark vectorstore (one-time setup)
-python evaluation/build_evaluation_db.py
+# Create/reset evaluation tables
+python db/sqlite_setup.py
 
-# Run full 30-question benchmark
-python evaluation/evaluate.py
-# Results auto-logged to SQLite
+# Run the full benchmark evaluation
+python -m evaluation.evaluate
+
+# Generate evaluation metrics
+python evaluation/metrics.py
 ```
+
+This will:
+- Build a fresh evaluation vector database
+- Run all 30 benchmark questions
+- Log results to SQLite
+- Generate overall and category-wise accuracy metrics
 
 ### Deploy to Streamlit Community Cloud
 
@@ -635,8 +646,10 @@ python evaluation/evaluate.py
 2. Go to share.streamlit.io → connect repo
 3. Set streamlit_app.py as entry point
 4. Add GROQ_API_KEY under Settings → Secrets
-5. Deploy — then replace the Live Demo link at the top of this README
+5. Deploy
 ```
+
+Application deployed successfully on Streamlit Community Cloud.
 
 ---
 
