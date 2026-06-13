@@ -27,7 +27,7 @@
 
 <br/>
 
-## 🚀 [Click here to try BOLVEDA Live →](https://your-app.streamlit.app)
+## 🚀 [Click here to try BOLVEDA Live →](https://bolveda-ai.streamlit.app)
 
 <br/>
 
