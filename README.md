@@ -37,6 +37,12 @@
 
 ---
 
+> 🚀 **Key Achievement**
+>
+> Built a production-grade RAG system with automated evaluation, session-isolated vectorstores, dual-database architecture, and a benchmark score of **27/30 (90%)** with **zero hallucinations on out-of-scope questions**.
+
+---
+
 <details>
 <summary><b>📋 Table of Contents</b></summary>
 
@@ -93,27 +99,33 @@ The system goes beyond basic RAG with a complete automated evaluation framework,
 <td width="50%">
 
 ### 🤖 Core AI
-- **PDF ingestion** with fault-tolerant parsing
-- **Recursive chunking** — size 1000, overlap 200
-- **MiniLM embeddings** for semantic representation
-- **MMR retrieval** — diverse, relevant context per query
-- **Llama 3.3 70B** via Groq for fast generation
-- **Token streaming** for real-time UX
-- **Grounded citations** — answers tied to source chunks
-- **Conversational memory** — session-scoped chat history
+
+| Capability | Description |
+|---|---|
+| 📄 PDF Ingestion | Fault-tolerant parsing via PyPDFLoader |
+| ✂️ Recursive Chunking | size=1000, overlap=200 |
+| 🔢 MiniLM Embeddings | Semantic 384-dim representation |
+| 🔍 MMR Retrieval | Diverse, relevant context per query |
+| 🤖 Llama 3.3 70B | Fast generation via Groq |
+| ⚡ Token Streaming | Real-time UX |
+| 📌 Grounded Citations | Answers tied to source chunks |
+| 💬 Session Memory | Conversational context across turns |
 
 </td>
 <td width="50%">
 
 ### ⚙️ Engineering
-- **Session-based vectorstores** — UUID-isolated per session
-- **Automatic cleanup** — vectorstore deleted on session end
-- **Dual-database architecture** — ChromaDB + SQLite
-- **Isolated benchmark DB** — evaluation never touches user data
-- **Automated benchmarking** — one command, full report
-- **Category-wise accuracy** — factual / inferential / out-of-scope
-- **Hallucination detection** — context grounding similarity check
-- **Multi-document workflow** — safe sequential PDF sessions
+
+| Capability | Description |
+|---|---|
+| 🔐 UUID Vectorstores | Session-isolated per upload |
+| 🗑️ Auto Cleanup | Vectorstore deleted on session end |
+| 🗄️ Dual-DB Architecture | ChromaDB + SQLite |
+| 🧪 Isolated Benchmark DB | Evaluation never touches user data |
+| 📊 Automated Benchmarking | One command, full report |
+| 📈 Category-wise Accuracy | Factual / Inferential / Out-of-Scope |
+| 🚫 Hallucination Detection | Context grounding similarity check |
+| 📁 Multi-Document Workflow | Safe sequential PDF sessions |
 
 </td>
 </tr>
@@ -218,6 +230,8 @@ Session path deleted  →  vectorstore gone  →  state cleared
 | Privacy | Vectors persisted after use | Auto-deleted on session end |
 | Multi-document workflows | Broken | Fully supported |
 
+> 💡 **Key Insight**
+>
 > This was the most significant production engineering decision in the project — turning a fundamental ChromaDB concurrency limitation into a privacy-safe, session-isolated architecture.
 
 ---
@@ -278,7 +292,9 @@ flowchart LR
 | **Optimized For** | Nearest-neighbor search in high-dimensional space | SQL aggregations, GROUP BY category |
 | **Lifecycle** | UUID session path, auto-deleted on session end | Persistent across all sessions |
 
-> **Why two databases?** ChromaDB handles nearest-neighbor search in embedding space. SQLite handles structured aggregations and experiment tracking. Using the right tool for each job is a core design principle of BOLVEDA.
+> 💡 **Design Principle**
+>
+> ChromaDB handles nearest-neighbor search in embedding space. SQLite handles structured aggregations and experiment tracking. Using the right tool for each job is a core design principle of BOLVEDA.
 
 ---
 
@@ -309,6 +325,8 @@ flowchart TD
 | **Behavior** | New UUID per session, deleted on end | Never changes |
 | **Purpose** | Live conversational QA | Reproducible evaluation |
 
+> ⚠️ **Why Isolation Matters**
+>
 > If evaluation shared the runtime vectorstore, user uploads would silently corrupt benchmark results across runs. The two databases must never interact.
 
 ---
@@ -323,37 +341,37 @@ Without evaluation, the only signal was manual inspection — subjective, unscal
 
 ### Benchmark Dataset
 
-**30 questions** across three categories, all grounded in `benchmark_pdf.pdf`:
+The evaluation benchmark consists of **30 manually curated questions** spanning three categories:
 
-| Category | Count | Tests |
+| Category | Count | Purpose |
 |---|---|---|
-| **Factual** | 10 | Direct lookup — answer exists verbatim in document |
-| **Inferential** | 10 | Multi-hop reasoning across chunks |
-| **Out-of-Scope** | 10 | Intentionally unanswerable from document |
+| **Factual** | 10 | Tests direct retrieval of information explicitly present in the document |
+| **Inferential** | 10 | Tests reasoning and synthesis across multiple retrieved chunks |
+| **Out-of-Scope** | 10 | Tests the system's ability to refuse answers not grounded in the document |
+
+Example benchmark entries:
 
 ```json
 {
-  "questions": [
-    {
-      "id": "F001",
-      "category": "factual",
-      "question": "What is tokenization?",
-      "expected_answer": "Tokenization converts text into tokens."
-    },
-    {
-      "id": "I001",
-      "category": "inferential",
-      "question": "Why does RAG reduce hallucinations compared to standard LLMs?"
-    },
-    {
-      "id": "O001",
-      "category": "out_of_scope",
-      "question": "Who won FIFA 2018?",
-      "expected_answer": "This information is not present in the document."
-    }
-  ]
+  "question": "What is RAG?",
+  "expected_answer": "RAG stands for Retrieval-Augmented Generation. It retrieves relevant documents from an external knowledge base and injects them into the prompt so the LLM can generate grounded answers.",
+  "question_type": "factual"
+}
+
+{
+  "question": "Why does retrieval reduce hallucinations?",
+  "expected_answer": "Retrieval reduces hallucinations because the model answers using retrieved external context instead of relying entirely on memory. The correct information is present directly inside the prompt.",
+  "question_type": "inferential"
+}
+
+{
+  "question": "Who won the FIFA World Cup in 2018?",
+  "expected_answer": "I could not find that information in the provided documents.",
+  "question_type": "out_of_scope"
 }
 ```
+
+All benchmark questions are grounded in the fixed `benchmark_pdf.pdf`, ensuring evaluation results remain reproducible across runs.
 
 ### Scoring Methodology
 
@@ -385,6 +403,31 @@ The `benchmark_pdf.pdf` is fixed and version-controlled. The `evaluation_chroma_
 
 **30 questions · 3 categories · fully automated scoring**
 
+### Evaluation Summary
+
+| Metric | Value |
+|---|---|
+| Overall Accuracy | 90.00% (27/30) |
+| Factual Accuracy | 100.0% (10/10) |
+| Inferential Accuracy | 70.0% (7/10) |
+| Out-of-Scope Accuracy | 100.0% (10/10) |
+
+Generated automatically using the evaluation pipeline.
+
+### Sample Metrics Output
+
+```text
+📊 OVERALL ACCURACY
+Accuracy: 90.00%
+
+📊 CATEGORY-WISE ACCURACY
+factual: 100.0%
+inferential: 70.0%
+out_of_scope: 100.0%
+
+Correct Answers: 27/30
+```
+
 <div align="center">
 
 | Category | Score | Accuracy | What It Proves |
@@ -411,7 +454,9 @@ Generated:  "Embeddings represent semantic meaning in vector space."
 → Keyword overlap: low.  Semantic meaning: identical.  Evaluator: incorrect.
 ```
 
-This exposed a known limitation of keyword-overlap evaluation for reasoning questions. The fix is **LLM-as-a-Judge** — the top-priority future improvement.
+> 💡 **Key Insight**
+>
+> This result exposed a known limitation of keyword-overlap evaluation for reasoning questions. The fix is **LLM-as-a-Judge** — the top-priority future improvement.
 
 ---
 
@@ -529,16 +574,6 @@ Three-layer approach: (1) <b>Retrieval grounding</b> — prompt contains only re
 
 BOLVEDA is built to handle failure at every layer gracefully, without crashing or returning misleading responses.
 
-**Empty query protection** — before any processing begins, the system checks whether the user's query is empty or whitespace-only and returns a clear prompt to enter a valid question rather than propagating a bad input downstream.
-
-**Vectorstore null check** — if no PDF has been uploaded yet in the current session, the application catches the missing vectorstore state early and asks the user to upload a document first, preventing retrieval from being called against nothing.
-
-**Empty retrieval fallback** — when MMR retrieval returns no chunks (which can happen with very unusual queries or corrupted documents), the system returns an explicit message: *"I could not find relevant information in the document for your question."* The LLM is never called with an empty context.
-
-**Malformed PDF handling** — PDF loading is wrapped in error handling that catches parse failures, empty documents, and corrupted files. The user sees a clear, actionable error message rather than a stack trace.
-
-**API key validation at startup** — the application checks for `GROQ_API_KEY` in the environment before any user interaction begins. If missing, it surfaces a configuration error immediately rather than failing mid-conversation.
-
 | Failure Mode | Handling |
 |---|---|
 | Malformed or empty PDF | Caught at load time with user-visible error |
@@ -547,6 +582,8 @@ BOLVEDA is built to handle failure at every layer gracefully, without crashing o
 | Missing API key | Environment check at application startup |
 | No PDF uploaded | Session state null check before query |
 | ChromaDB concurrency | UUID session isolation — eliminated entirely |
+
+Each failure is caught at the boundary closest to the source — never propagated silently downstream to the LLM or the user.
 
 ---
 
